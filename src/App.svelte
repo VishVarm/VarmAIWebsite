@@ -30,16 +30,71 @@
 </style> -->
 
 <script>
-/*
+
     // JavaScript logic for the component would go here
     import { onMount, onDestroy, tick } from 'svelte';
-    import tsParticles from 'tsparticles';
+    import Particles, { particlesInit } from '@tsparticles/svelte'
+    import { loadSlim } from '@tsparticles/slim';
 
     let posts = [];
     const MAX_POSTS = 50;
     let intervalId;
 
+    let particlesConfig = {
+        particles: {
+            color: {
+                value: '#D3D3D3'
+            },
+            links: {
+                enable:true
+            },
+            shape: {
+                type: 'circle'
+            },
+            move: {
+                enable: true,
+                speed: 1
+            },
+            size: {
+                value: 3
+            },
+            number: {
+                value: 100
+            }
+        },
+        interactivity: {
+            events: {
+                onClick: {
+                    enable:true,
+                    mode: 'push'
+                },
+                onHover: {
+                    enable:true,
+                    mode: 'repulse'
+                }
+            },
+            modes: {
+                push: {
+                    quantity: 4
+                },
+                repulse: {
+                    distance: 100,  // Radius of the repulse effect (in pixels)
+                    duration: 0.4   // Duration of the effect
+                }
+            }
+        }
+    };
+    
+    let onParticlesLoaded = (event) => {
+        const particlesContainer = event.detail.particles;
+    };
+    
+    void particlesInit(async (engine) => {
+        await loadSlim(engine);
+    });
+
     // Function to fetch data from the API
+    
     async function fetchPosts() {
         try {
             const response = await fetch('https://jsonplaceholder.typicode.com/posts');
@@ -57,8 +112,10 @@
         }
     }
 
+
     // Fetch data on component mount and set up the interval
-    onMount(() => {
+    onMount(  () => {
+
         // Fetch posts initially
         fetchPosts();
 
@@ -68,39 +125,14 @@
             await tick();  // Ensure DOM is updated after fetching data
         }, 180000); // 180,000 ms = 3 minutes
 
-        // Initialize the particles effect in the background
-        tsParticles.load('particles-js',{
-            selector: '#particles-js',  // The container where the particles will appear
-            color: {
-                value: '#ffffff',
-            },
-            particles: {
-                number: {
-                value: 50,
-                },
-                shape: {
-                type: 'circle',
-                },
-                opacity: {
-                value: 0.5,
-                },
-                size: {
-                value: 3,
-                },
-                move: {
-                speed: 1,
-                },
-            },
-        });
-
     });
     
     // Clean up interval when the component is destroyed
     onDestroy(() => {
-        clearInterval(intervalId);
+         clearInterval(intervalId);
     });
 
-*/
+
 </script>
 
 <style>
@@ -160,6 +192,9 @@
         border-radius: 10px;
         background-color: rgba(255, 193, 7, 0.1); /* Transparent goldish background */
         transition: all 0.3s ease;
+        display: flex; /* Enable flexbox */
+        justify-content: center; /* Horizontally center text */
+        align-items: center; /* Vertically center text */
     }
 
     nav a:hover {
@@ -175,20 +210,24 @@
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Depth effect */
+        z-index:1;
     }
 
     .mascot-container img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        z-index:1;
     }
 
     .post {
-        background-color: rgba(255, 255, 255, 0.8);
+        /*background-color: rgba(255, 255, 255, 0.8);*/
+        background-color: rgba(255, 193, 7, 0.1);
         margin: 10px 0;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
+        z-index:1
     }
 
     .post h3 {
@@ -203,32 +242,48 @@
     #container {
         max-width: 600px;
         margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Creates space between the elements */
+        align-items: center;
+    }
+    .new-posts {
+        margin-top: 20px; /* Ensure space between the top content and new posts */
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
     }
 </style>
 
 <main>
-    <header>VarmAI</header>
-    <nav>
-        <a href="#dexscreener">DexScreener</a>
-        <a href="#proof-of-consciousness">Proof of Consciousness</a>
-        <a href="#white-paper">White Paper</a>
-    </nav>
-    <div class="mascot-container">
-        <img src="/varmcat.png" alt="VarmAI Mascot">
-    </div>
-    <!--
-    <h1>Latest Posts</h1>
+    <h1>Varm.AI</h1>
+    <Particles
+        id="particles-js"
+        style=""
+        options="{particlesConfig}"
+        on:particlesLoaded={onParticlesLoaded}
+        {particlesInit}
+    />
     <div id="container">
-        {#each posts as post (post.id)}
-        <div class="post">
-            <h3>{post.title}</h3>
-            <p>{post.body}</p>
+        <nav>
+            <a href="#dexscreener">DexScreener</a>
+            <a href="#proof-of-consciousness">Proof of Consciousness</a>
+            <a href="#white-paper">White Paper</a>
+        </nav>
+        <div class="mascot-container">
+            <img src="/varmcat.png" alt="VarmAI Mascot">
         </div>
-        {/each}
+
+        <div class='new-posts'>
+            {#each posts as post (post.id)}
+            <div class="post">
+                <h3>{post.title}</h3>
+                <p>{post.body}</p>
+            </div>
+            {/each}
+        </div>
     </div>
-    -->
 </main>
-<!--
-<div id="particles-js"></div>
--->
+
 
